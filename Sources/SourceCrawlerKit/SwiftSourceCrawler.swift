@@ -12,41 +12,35 @@ public struct SwiftSourceCrawler {
         self.acceptedExtensions = acceptedExtensions
     }
     
-    public func crawlSource() -> [String: FileAnalysisResult] {
+    public func crawlSource() throws -> [String: FileAnalysisResult] {
         var results = [String: FileAnalysisResult]()
 
         if let enumerator = fileManager.enumerator(at: URL(fileURLWithPath: rootPath),
                                                     includingPropertiesForKeys: [.isRegularFileKey],
                                                     options: [.skipsHiddenFiles, .skipsPackageDescendants]) {
-            for case let fileURL as URL in enumerator {
-                if let analysisResult = processFile(fileURL) {
-                    let relativePath = String(fileURL.path.dropFirst(rootPath.count))
-                    results[relativePath] = analysisResult
-                }
+            for case let fileURL as URL in enumerator where acceptedExtensions.contains(fileURL.pathExtension) {
+                let analysisResult = try processFile(fileURL)
+                let relativePath = String(fileURL.path.dropFirst(rootPath.count))
+                results[relativePath] = analysisResult
             }
         }
 
         return results
     }
 
-    private func processFile(_ fileURL: URL) -> FileAnalysisResult? {
-        do {
-            let fileAttributes = try fileURL.resourceValues(forKeys: [.isRegularFileKey])
-            if fileAttributes.isRegularFile ?? false {
-                let fileExtension = fileURL.pathExtension
-                if acceptedExtensions.contains(fileExtension) {
-                    return analyzeFileContent(at: fileURL, withExtension: fileExtension)
-                }
-            }
-        } catch {
-            print("Failed to process file: \(fileURL.path), error: \(error)")
+    private func processFile(_ fileURL: URL) throws -> FileAnalysisResult {
+        let fileAttributes = try fileURL.resourceValues(forKeys: [.isRegularFileKey])
+        
+        guard fileAttributes.isRegularFile ?? false else {
+            throw SwiftSourceCrawlerError.unprocessibleFile(fileURL)
         }
-        return nil
+        
+        return try analyzeFileContent(at: fileURL)
     }
 
-    private func analyzeFileContent(at fileURL: URL, withExtension fileExtension: String) -> FileAnalysisResult? {
+    private func analyzeFileContent(at fileURL: URL) throws -> FileAnalysisResult {
         if let fileContents = try? String(contentsOf: fileURL) {
-            if fileExtension == "swift" {
+            if fileURL.pathExtension == "swift" {
                 let typeAnalysis = analyzer.analyze(fileContents: fileContents)
                 return .swiftFile(types: typeAnalysis, content: fileContents)
             } else {
@@ -54,10 +48,13 @@ public struct SwiftSourceCrawler {
             }
         } else {
             print("Failed to read contents of file: \(fileURL.path)")
-            return nil
+            throw SwiftSourceCrawlerError.failedToReadContents(fileURL)
         }
     }
 
 }
 
-
+enum SwiftSourceCrawlerError: Error {
+    case failedToReadContents(URL)
+    case unprocessibleFile(URL)
+}

@@ -18,7 +18,7 @@ struct SourceCrawlerCommand: ParsableCommand {
         let defaultOutputName = URL(fileURLWithPath: rootDirectory).lastPathComponent
         let extensions = (fileExtensions ?? "swift,txt,md").components(separatedBy: ",")
         let manager = SwiftSourceCrawler(rootPath: rootDirectory, acceptedExtensions: extensions)
-        let results = manager.crawlSource()
+        let results = try manager.crawlSource()
         let encoder = JSONEncoder()
         encoder.outputFormatting = [.sortedKeys]
         
