@@ -29,8 +29,9 @@ struct SourceCrawler {
                                 } else {
                                     analysisResult = .otherFile(content: fileContents)
                                 }
-                                
-                                results[filePath] = analysisResult
+                               
+                                let relativePath = String(filePath.dropFirst(rootPath.count))
+                                results[relativePath] = analysisResult
                             }
                         }
                     }
