@@ -1,6 +1,8 @@
 # SourceCrawler
 
-A quickly hacked together source crawler for Swift projects.
+A source crawler for Swift projects that uses SwiftSyntax and SwiftParser to extract type information.
+
+This tool was created for the purpose of collating source information from git repositories to provide additional context to large language models such as ChatGPT.
 
 ## Install
 
