@@ -1,12 +1,18 @@
 import Foundation
 
-struct SourceCrawler {
+public struct SwiftSourceCrawler {
+    
     let rootPath: String
     let acceptedExtensions: [String]
     let fileManager = FileManager.default
     let analyzer = SwiftTypeAnalyser()
     
-    func crawlSource() -> [String: FileAnalysisResult] {
+    public init(rootPath: String, acceptedExtensions: [String]) {
+        self.rootPath = rootPath
+        self.acceptedExtensions = acceptedExtensions
+    }
+    
+    public func crawlSource() -> [String: FileAnalysisResult] {
         var results = [String: FileAnalysisResult]()
 
         if let enumerator = fileManager.enumerator(at: URL(fileURLWithPath: rootPath),

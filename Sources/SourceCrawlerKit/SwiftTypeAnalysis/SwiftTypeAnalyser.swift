@@ -16,7 +16,8 @@ struct SwiftTypeAnalyser {
             declaredProtocols: visitor.declaredProtocols,
             extendedTypes: visitor.extendedTypes,
             inheritedTypes: visitor.inheritedTypes,
-            referencedTypes: visitor.referencedTypes
+            referencedTypes: visitor.referencedTypes,
+            nestTypes: visitor.nestedTypes
         )
     }
 }

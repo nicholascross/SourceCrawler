@@ -17,9 +17,22 @@ let package = Package(
             name: "SourceCrawler",
             dependencies: [
                 .product(name: "ArgumentParser", package: "swift-argument-parser"),
+                .target(name: "SourceCrawlerKit"),
                 .product(name: "SwiftSyntax", package: "swift-syntax"),
                 .product(name: "SwiftParser", package: "swift-syntax")
             ]
         ),
+        .target(name: "SourceCrawlerKit", dependencies: [
+            .product(name: "SwiftSyntax", package: "swift-syntax"),
+            .product(name: "SwiftParser", package: "swift-syntax")
+        ]),
+        .testTarget(
+            name: "SourceCrawlerTests",
+            dependencies: [
+                .target(name: "SourceCrawlerKit"),
+                .product(name: "SwiftSyntax", package: "swift-syntax"),
+                .product(name: "SwiftParser", package: "swift-syntax")
+                ]
+        )
     ]
 )

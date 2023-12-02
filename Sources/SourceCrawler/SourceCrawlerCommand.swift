@@ -1,5 +1,6 @@
 import Foundation
 import ArgumentParser
+import SourceCrawlerKit
 
 @main
 struct SourceCrawlerCommand: ParsableCommand {
@@ -16,7 +17,7 @@ struct SourceCrawlerCommand: ParsableCommand {
         let rootDirectory = rootPath ?? FileManager.default.currentDirectoryPath
         let defaultOutputName = URL(fileURLWithPath: rootDirectory).lastPathComponent
         let extensions = (fileExtensions ?? "swift,txt,md").components(separatedBy: ",")
-        let manager = SourceCrawler(rootPath: rootDirectory, acceptedExtensions: extensions)
+        let manager = SwiftSourceCrawler(rootPath: rootDirectory, acceptedExtensions: extensions)
         let results = manager.crawlSource()
         let encoder = JSONEncoder()
         encoder.outputFormatting = [.sortedKeys]
