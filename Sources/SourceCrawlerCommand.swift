@@ -14,16 +14,17 @@ struct SourceCrawlerCommand: ParsableCommand {
 
     mutating func run() throws {
         let rootDirectory = rootPath ?? FileManager.default.currentDirectoryPath
+        let defaultOutputName = URL(fileURLWithPath: rootDirectory).lastPathComponent
         let extensions = (fileExtensions ?? "swift,txt,md").components(separatedBy: ",")
         let manager = SourceCrawler(rootPath: rootDirectory, acceptedExtensions: extensions)
         let results = manager.crawlSource()
-
         let encoder = JSONEncoder()
         encoder.outputFormatting = [.sortedKeys]
         
         if let jsonData = try? encoder.encode(results) {
-            try jsonData.write(to: URL(fileURLWithPath: outputPath ?? "output.json"))
-            print("Analysis results saved to \(outputPath ?? "output.json")")
+            let outputURL = URL(fileURLWithPath: outputPath ?? "\(defaultOutputName).json")
+            try jsonData.write(to: outputURL)
+            print("Analysis results saved to \(outputURL)")
         } else {
             print("Failed to serialize results to JSON")
         }
