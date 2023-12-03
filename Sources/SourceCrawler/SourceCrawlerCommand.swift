@@ -13,7 +13,7 @@ struct SourceCrawlerCommand: ParsableCommand {
     @Option(name: [.customShort("o"), .long], help: "Output file path for the JSON results.")
     var outputPath: String?
     
-    @Option(name: [.customShort("e"), .long], help: "Comma-separated list of paths to exclude.")
+    @Option(name: [.customShort("e"), .long], help: "Comma-separated list of paths to exclude. eg. **/Tests/*.swift")
     var excludedPaths: String?
 
     mutating func run() throws {

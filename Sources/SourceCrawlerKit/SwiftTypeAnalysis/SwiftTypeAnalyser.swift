@@ -10,15 +10,26 @@ struct SwiftTypeAnalyser {
         visitor.walk(syntaxTree)
         
         return TypeExtractionResult(
-            declaredClasses: visitor.declaredClasses,
-            declaredStructs: visitor.declaredStructs,
-            declaredEnums: visitor.declaredEnums,
-            declaredProtocols: visitor.declaredProtocols,
-            extendedTypes: visitor.extendedTypes,
-            inheritedTypes: visitor.inheritedTypes,
-            referencedTypes: visitor.referencedTypes,
-            nestTypes: visitor.nestedTypes
+            declaredClasses: visitor.declaredClasses.nullifyWhenEmpty(),
+            declaredStructs: visitor.declaredStructs.nullifyWhenEmpty(),
+            declaredEnums: visitor.declaredEnums.nullifyWhenEmpty(),
+            declaredProtocols: visitor.declaredProtocols.nullifyWhenEmpty(),
+            extendedTypes: visitor.extendedTypes.nullifyWhenEmpty(),
+            inheritedTypes: visitor.inheritedTypes.nullifyWhenEmpty(),
+            referencedTypes: visitor.referencedTypes.nullifyWhenEmpty(),
+            nestTypes: visitor.nestedTypes.nullifyWhenEmpty()
         )
     }
 }
 
+private extension Array {
+    func nullifyWhenEmpty() -> Array<Element>? {
+        isEmpty ? nil : self
+    }
+}
+
+private extension Dictionary {
+    func nullifyWhenEmpty() -> Dictionary<Key,Value>? {
+        isEmpty ? nil : self
+    }
+}

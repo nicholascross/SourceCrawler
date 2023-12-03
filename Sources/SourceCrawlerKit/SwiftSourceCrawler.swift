@@ -35,8 +35,9 @@ public struct SwiftSourceCrawler {
     
     private func acceptFileForProcessing(fileURL: URL) -> Bool {
         let validExtension = acceptedExtensions.contains(fileURL.pathExtension)
-        lazy var excludedPath = FilenameMatcher(pattern: excludedPaths.map({ "**/\($0)/*" }).joined(separator: "|"))
-            .match(filename: fileURL.pathComponents.joined(separator: "/").replacingOccurrences(of: "//", with: "/"))
+        lazy var excludedPath = excludedPaths.first(where: {
+            FilenameMatcher(pattern: $0).match(filename: fileURL.pathComponents.joined(separator: "/").replacingOccurrences(of: "//", with: "/"))
+        }) != nil
         lazy var isRegularFile = (try? fileURL.resourceValues(forKeys: [.isRegularFileKey]).isRegularFile) ?? false
         return validExtension && !excludedPath && isRegularFile
     }
