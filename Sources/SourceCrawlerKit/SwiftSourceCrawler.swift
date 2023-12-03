@@ -1,15 +1,18 @@
 import Foundation
+import FilenameMatcher
 
 public struct SwiftSourceCrawler {
     
     let rootPath: String
     let acceptedExtensions: [String]
+    let excludedPaths: [String]
     let fileManager = FileManager.default
     let analyzer = SwiftTypeAnalyser()
     
-    public init(rootPath: String, acceptedExtensions: [String]) {
+    public init(rootPath: String, acceptedExtensions: [String], excludedPaths: [String] = []) {
         self.rootPath = rootPath
         self.acceptedExtensions = acceptedExtensions
+        self.excludedPaths = excludedPaths
     }
     
     public func crawlSource() throws -> [String: FileAnalysisResult] {
@@ -18,8 +21,10 @@ public struct SwiftSourceCrawler {
         if let enumerator = fileManager.enumerator(at: URL(fileURLWithPath: rootPath),
                                                     includingPropertiesForKeys: [.isRegularFileKey],
                                                     options: [.skipsHiddenFiles, .skipsPackageDescendants]) {
-            for case let fileURL as URL in enumerator where acceptedExtensions.contains(fileURL.pathExtension) {
-                let analysisResult = try processFile(fileURL)
+            for case let fileURL as URL in enumerator {
+                guard acceptFileForProcessing(fileURL: fileURL) else { continue }
+                
+                let analysisResult = try analyzeFileContent(at: fileURL)
                 let relativePath = String(fileURL.path.dropFirst(rootPath.count))
                 results[relativePath] = analysisResult
             }
@@ -27,15 +32,13 @@ public struct SwiftSourceCrawler {
 
         return results
     }
-
-    private func processFile(_ fileURL: URL) throws -> FileAnalysisResult {
-        let fileAttributes = try fileURL.resourceValues(forKeys: [.isRegularFileKey])
-        
-        guard fileAttributes.isRegularFile ?? false else {
-            throw SwiftSourceCrawlerError.unprocessibleFile(fileURL)
-        }
-        
-        return try analyzeFileContent(at: fileURL)
+    
+    private func acceptFileForProcessing(fileURL: URL) -> Bool {
+        let validExtension = acceptedExtensions.contains(fileURL.pathExtension)
+        lazy var excludedPath = FilenameMatcher(pattern: excludedPaths.map({ "**/\($0)/*" }).joined(separator: "|"))
+            .match(filename: fileURL.pathComponents.joined(separator: "/").replacingOccurrences(of: "//", with: "/"))
+        lazy var isRegularFile = (try? fileURL.resourceValues(forKeys: [.isRegularFileKey]).isRegularFile) ?? false
+        return validExtension && !excludedPath && isRegularFile
     }
 
     private func analyzeFileContent(at fileURL: URL) throws -> FileAnalysisResult {
