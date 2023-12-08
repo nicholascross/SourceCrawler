@@ -1,8 +1,8 @@
 # SourceCrawler
 
 SourceCrawler is a tool designed for Swift projects, leveraging SwiftSyntax and SwiftParser to extract detailed type information.
-It's tailored for analyzing and collating source information from git repositories, providing invaluable context to large language models like ChatGPT.
-This makes it an essential tool for developers working with Swift codebases, aiming to improve understanding and documentation of complex projects.
+It's tailored for analyzing and collating source information from git repositories, providing context to large language models like ChatGPT.
+This makes it a valuable tool for developers working with Swift codebases, aiming to improve understanding and documentation of complex projects.
 
 ## Features
 
@@ -26,7 +26,7 @@ This command instructs SourceCrawler to:
 - Output the analysis results in a JSON file named result.json in the current directory.
 
 ```bash
-source-crawler --rootPath /path/to/your/swift/project --fileExtensions swift --outputPath result.json --excludedPaths **/Tests/*.swift
+source-crawler --rootPath /path/to/your/swift/project --fileExtensions swift --outputPath result.json --excludedPaths "**/Tests/*.swift"
 ```
 
 ## Default Usage Example
