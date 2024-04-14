@@ -15,13 +15,16 @@ struct SourceCrawlerCommand: ParsableCommand {
     
     @Option(name: [.customShort("e"), .long], help: "Comma-separated list of paths to exclude. eg. **/Tests/*.swift")
     var excludedPaths: String?
+    
+    @Flag(name: .customShort("b"), help: "Include body in output for files and functions")
+    var includeBody: Bool = true
 
     mutating func run() throws {
         let rootDirectory = rootPath ?? FileManager.default.currentDirectoryPath
         let defaultOutputName = URL(fileURLWithPath: rootDirectory).lastPathComponent
         let extensions = (fileExtensions ?? "swift,txt,md").components(separatedBy: ",")
         let exclusions = excludedPaths?.components(separatedBy: ",") ?? []
-        let crawler = SwiftSourceCrawler(rootPath: rootDirectory, acceptedExtensions: extensions, excludedPaths: exclusions)
+        let crawler = SwiftSourceCrawler(rootPath: rootDirectory, acceptedExtensions: extensions, excludedPaths: exclusions, includeBody: includeBody)
         let results = try crawler.crawlSource()
         let encoder = JSONEncoder()
         encoder.outputFormatting = [.sortedKeys]
