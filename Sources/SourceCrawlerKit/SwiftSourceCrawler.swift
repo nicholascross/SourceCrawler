@@ -7,14 +7,15 @@ public struct SwiftSourceCrawler {
     private let acceptedExtensions: [String]
     private let excludedPaths: [String]
     private let fileManager = FileManager.default
-    private let analyzer = SwiftTypeAnalyser()
-    private let includeBody: Bool
+    private let analyzer: SwiftTypeAnalyser
+    private let includeContents: Bool
     
-    public init(rootPath: String, acceptedExtensions: [String], excludedPaths: [String] = [], includeBody: Bool = false) {
+    public init(rootPath: String, acceptedExtensions: [String], excludedPaths: [String] = [], includeContents: Bool = true, includeBody: Bool = false) {
         self.rootPath = rootPath
         self.acceptedExtensions = acceptedExtensions
         self.excludedPaths = excludedPaths
-        self.includeBody = includeBody
+        self.includeContents = includeContents
+        self.analyzer = SwiftTypeAnalyser(includeBody: includeBody)
     }
     
     public func crawlSource() throws -> [String: FileAnalysisResult] {
@@ -43,9 +44,9 @@ public struct SwiftSourceCrawler {
         if let fileContents = try? String(contentsOf: fileURL) {
             if fileURL.pathExtension == "swift" {
                 let typeAnalysis = analyzer.analyze(fileContents: fileContents)
-                return .swiftFile(types: typeAnalysis, content: includeBody ? fileContents : nil)
+                return .swiftFile(types: typeAnalysis, content: includeContents ? fileContents : nil)
             } else {
-                return .otherFile(content: includeBody ? fileContents : nil)
+                return .otherFile(content: includeContents ? fileContents : nil)
             }
         } else {
             print("Failed to read contents of file: \(fileURL.path)")

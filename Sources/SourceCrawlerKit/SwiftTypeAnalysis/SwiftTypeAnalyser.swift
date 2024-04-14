@@ -3,21 +3,27 @@ import SwiftSyntax
 import SwiftParser
 
 struct SwiftTypeAnalyser {
+    let includeBody: Bool
     
     func analyze(fileContents: String) -> TypeExtractionResult {
         let syntaxTree = Parser.parse(source: fileContents)
-        let visitor = TypeExtractionVisitor(viewMode: .fixedUp)
-        visitor.walk(syntaxTree)
+        let typeVisitor = TypeExtractionVisitor(viewMode: .fixedUp)
+        typeVisitor.walk(syntaxTree)
+        
+        let functionVistor = FunctionExtractionVisitor(viewMode: .fixedUp)
+        functionVistor.includeBody = includeBody
+        functionVistor.walk(syntaxTree)
         
         return TypeExtractionResult(
-            declaredClasses: visitor.declaredClasses.nullifyWhenEmpty(),
-            declaredStructs: visitor.declaredStructs.nullifyWhenEmpty(),
-            declaredEnums: visitor.declaredEnums.nullifyWhenEmpty(),
-            declaredProtocols: visitor.declaredProtocols.nullifyWhenEmpty(),
-            extendedTypes: visitor.extendedTypes.nullifyWhenEmpty(),
-            inheritedTypes: visitor.inheritedTypes.nullifyWhenEmpty(),
-            referencedTypes: visitor.referencedTypes.nullifyWhenEmpty(),
-            nestTypes: visitor.nestedTypes.nullifyWhenEmpty()
+            declaredClasses: typeVisitor.declaredClasses.nullifyWhenEmpty(),
+            declaredStructs: typeVisitor.declaredStructs.nullifyWhenEmpty(),
+            declaredEnums: typeVisitor.declaredEnums.nullifyWhenEmpty(),
+            declaredProtocols: typeVisitor.declaredProtocols.nullifyWhenEmpty(),
+            extendedTypes: typeVisitor.extendedTypes.nullifyWhenEmpty(),
+            inheritedTypes: typeVisitor.inheritedTypes.nullifyWhenEmpty(),
+            referencedTypes: typeVisitor.referencedTypes.nullifyWhenEmpty(),
+            nestTypes: typeVisitor.nestedTypes.nullifyWhenEmpty(),
+            function: functionVistor.functions
         )
     }
 }
@@ -33,3 +39,4 @@ private extension Dictionary {
         isEmpty ? nil : self
     }
 }
+
