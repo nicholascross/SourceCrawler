@@ -11,6 +11,8 @@ public struct TypeExtractionResult: Encodable {
     public let referencedTypes: [String]?
     public let nestTypes: [String: [String]]?
     public let function: [FunctionDetail]
+    
+    public let imports: [String]?
 }
 
 public struct FunctionDetail: Encodable {

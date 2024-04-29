@@ -14,6 +14,9 @@ struct SwiftTypeAnalyser {
         functionVistor.includeBody = includeBody
         functionVistor.walk(syntaxTree)
         
+        let importVisitor = ImportExtractionVisitor(viewMode: .fixedUp)
+        importVisitor.walk(syntaxTree)
+        
         return TypeExtractionResult(
             declaredClasses: typeVisitor.declaredClasses.nullifyWhenEmpty(),
             declaredStructs: typeVisitor.declaredStructs.nullifyWhenEmpty(),
@@ -23,7 +26,8 @@ struct SwiftTypeAnalyser {
             inheritedTypes: typeVisitor.inheritedTypes.nullifyWhenEmpty(),
             referencedTypes: typeVisitor.referencedTypes.nullifyWhenEmpty(),
             nestTypes: typeVisitor.nestedTypes.nullifyWhenEmpty(),
-            function: functionVistor.functions
+            function: functionVistor.functions,
+            imports: importVisitor.imports
         )
     }
 }
