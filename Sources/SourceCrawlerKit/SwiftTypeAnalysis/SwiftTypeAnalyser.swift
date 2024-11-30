@@ -1,22 +1,22 @@
 import Foundation
-import SwiftSyntax
 import SwiftParser
+import SwiftSyntax
 
 struct SwiftTypeAnalyser {
     let includeBody: Bool
-    
+
     func analyze(fileContents: String) -> TypeExtractionResult {
         let syntaxTree = Parser.parse(source: fileContents)
         let typeVisitor = TypeExtractionVisitor(viewMode: .fixedUp)
         typeVisitor.walk(syntaxTree)
-        
+
         let functionVistor = FunctionExtractionVisitor(viewMode: .fixedUp)
         functionVistor.includeBody = includeBody
         functionVistor.walk(syntaxTree)
-        
+
         let importVisitor = ImportExtractionVisitor(viewMode: .fixedUp)
         importVisitor.walk(syntaxTree)
-        
+
         return TypeExtractionResult(
             declaredClasses: typeVisitor.declaredClasses.nullifyWhenEmpty(),
             declaredStructs: typeVisitor.declaredStructs.nullifyWhenEmpty(),
@@ -33,14 +33,13 @@ struct SwiftTypeAnalyser {
 }
 
 private extension Array {
-    func nullifyWhenEmpty() -> Array<Element>? {
+    func nullifyWhenEmpty() -> [Element]? {
         isEmpty ? nil : self
     }
 }
 
 private extension Dictionary {
-    func nullifyWhenEmpty() -> Dictionary<Key,Value>? {
+    func nullifyWhenEmpty() -> [Key: Value]? {
         isEmpty ? nil : self
     }
 }
-

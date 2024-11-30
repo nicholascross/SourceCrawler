@@ -1,10 +1,9 @@
-import XCTest
 @testable import SourceCrawlerKit
 import SwiftParser
 import SwiftSyntax
+import XCTest
 
 class FunctionExtractionTests: XCTestCase {
-    
     // Helper to parse Swift code and return the function details
     func extractFunctions(from source: String) -> [FunctionDetail] {
         let syntaxTree = Parser.parse(source: source)
@@ -45,11 +44,11 @@ class FunctionExtractionTests: XCTestCase {
             func outerFunc() {
                 func innerFunc() {}
             }
-        
+
             func anotherFunc() {}
         }
         """
-        
+
         let functions = extractFunctions(from: source)
         XCTAssertEqual(functions.count, 2)
         XCTAssertEqual(functions[0].name, "outerFunc")
@@ -68,8 +67,7 @@ class FunctionExtractionTests: XCTestCase {
         visitor.walk(syntaxTree)
         XCTAssertNil(visitor.functions.first?.body)
     }
-    
-    
+
     func testFunctionExtractionWithBody() {
         let source = """
         func simpleFunc() -> Int { return 1 }

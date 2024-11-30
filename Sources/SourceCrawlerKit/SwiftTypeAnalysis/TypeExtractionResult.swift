@@ -5,13 +5,13 @@ public struct TypeExtractionResult: Encodable {
     public let declaredStructs: [String]?
     public let declaredEnums: [String]?
     public let declaredProtocols: [String]?
-    
+
     public let extendedTypes: [String]?
     public let inheritedTypes: [String]?
     public let referencedTypes: [String]?
     public let nestTypes: [String: [String]]?
     public let function: [FunctionDetail]
-    
+
     public let imports: [String]?
 }
 

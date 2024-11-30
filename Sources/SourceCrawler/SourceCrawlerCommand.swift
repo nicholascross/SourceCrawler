@@ -1,5 +1,5 @@
-import Foundation
 import ArgumentParser
+import Foundation
 import SourceCrawlerKit
 
 @main
@@ -12,13 +12,13 @@ struct SourceCrawlerCommand: ParsableCommand {
 
     @Option(name: [.customShort("o"), .long], help: "Output file path for the JSON results.")
     var outputPath: String?
-    
+
     @Option(name: [.customShort("e"), .long], help: "Comma-separated list of paths to exclude. eg. **/Tests/*.swift")
     var excludedPaths: String?
-    
+
     @Flag(name: .customShort("c"), help: "Exclude file contents in output")
     var excludeContents: Bool = false
-    
+
     @Flag(name: .customShort("f"), help: "Include function body in output")
     var includeBody: Bool = false
 
@@ -31,7 +31,7 @@ struct SourceCrawlerCommand: ParsableCommand {
         let results = try crawler.crawlSource()
         let encoder = JSONEncoder()
         encoder.outputFormatting = [.sortedKeys]
-        
+
         if let jsonData = try? encoder.encode(results) {
             let outputURL = URL(fileURLWithPath: outputPath ?? "\(defaultOutputName).json")
             try jsonData.write(to: outputURL)

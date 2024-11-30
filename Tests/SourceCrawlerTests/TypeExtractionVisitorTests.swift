@@ -1,10 +1,9 @@
-import XCTest
 @testable import SourceCrawlerKit
-import SwiftSyntax
 import SwiftParser
+import SwiftSyntax
+import XCTest
 
 class TypeExtractionVisitorTests: XCTestCase {
-
     func testClassDeclarationExtraction() {
         let source = "class MyClass {} class AnotherClass {}"
         let syntaxTree = Parser.parse(source: source)
@@ -39,9 +38,9 @@ class TypeExtractionVisitorTests: XCTestCase {
 
     func testTypeInheritanceAndExtensionExtraction() {
         let source = """
-                     class MyClass: ParentClass {}
-                     extension SomeStruct: AnInterface {}
-                     """
+        class MyClass: ParentClass {}
+        extension SomeStruct: AnInterface {}
+        """
         let syntaxTree = Parser.parse(source: source)
         let visitor = TypeExtractionVisitor(viewMode: .fixedUp)
         visitor.walk(syntaxTree)

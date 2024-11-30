@@ -1,30 +1,29 @@
-import Foundation
 import FilenameMatcher
+import Foundation
 
 public struct SwiftSourceCrawler {
-    
     private let rootPath: String
     private let acceptedExtensions: [String]
     private let excludedPaths: [String]
     private let fileManager = FileManager.default
     private let analyzer: SwiftTypeAnalyser
     private let includeContents: Bool
-    
+
     public init(rootPath: String, acceptedExtensions: [String], excludedPaths: [String] = [], includeContents: Bool = true, includeBody: Bool = false) {
         self.rootPath = rootPath
         self.acceptedExtensions = acceptedExtensions
         self.excludedPaths = excludedPaths
         self.includeContents = includeContents
-        self.analyzer = SwiftTypeAnalyser(includeBody: includeBody)
+        analyzer = SwiftTypeAnalyser(includeBody: includeBody)
     }
-    
+
     public func crawlSource() throws -> [String: FileAnalysisResult] {
         var results = [String: FileAnalysisResult]()
 
         if let enumerator = fileEnumerator() {
             for case let fileURL as URL in enumerator {
                 guard acceptFileForProcessing(fileURL: fileURL) else { continue }
-                
+
                 let analysisResult = try analyzeFileContent(at: fileURL)
                 let relativePath = String(fileURL.path.dropFirst(rootPath.count))
                 results[relativePath] = analysisResult
@@ -33,7 +32,7 @@ public struct SwiftSourceCrawler {
 
         return results
     }
-    
+
     private func acceptFileForProcessing(fileURL: URL) -> Bool {
         let validExtension = acceptedExtensions.contains(fileURL.pathExtension)
         lazy var excludedPath = excludedPaths.isFilenameMatch(fileURL: fileURL)
@@ -53,12 +52,11 @@ public struct SwiftSourceCrawler {
             throw SwiftSourceCrawlerError.failedToReadContents(fileURL)
         }
     }
-    
+
     private func fileEnumerator() -> FileManager.DirectoryEnumerator? {
         fileManager.enumerator(at: URL(fileURLWithPath: rootPath),
                                includingPropertiesForKeys: [.isRegularFileKey],
-                               options: [.skipsHiddenFiles, .skipsPackageDescendants]
-        )
+                               options: [.skipsHiddenFiles, .skipsPackageDescendants])
     }
 }
 
@@ -70,7 +68,7 @@ private extension URL {
     var simplePath: String {
         pathComponents.joined(separator: "/").replacingOccurrences(of: "//", with: "/")
     }
-    
+
     var isFile: Bool {
         (try? resourceValues(forKeys: [.isRegularFileKey]).isRegularFile) ?? false
     }

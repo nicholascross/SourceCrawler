@@ -20,21 +20,21 @@ let package = Package(
                 .product(name: "ArgumentParser", package: "swift-argument-parser"),
                 .target(name: "SourceCrawlerKit"),
                 .product(name: "SwiftSyntax", package: "swift-syntax"),
-                .product(name: "SwiftParser", package: "swift-syntax")
+                .product(name: "SwiftParser", package: "swift-syntax"),
             ]
         ),
         .target(name: "SourceCrawlerKit", dependencies: [
             .product(name: "SwiftSyntax", package: "swift-syntax"),
             .product(name: "SwiftParser", package: "swift-syntax"),
-            .product(name: "FilenameMatcher", package: "swift-filename-matcher")
+            .product(name: "FilenameMatcher", package: "swift-filename-matcher"),
         ]),
         .testTarget(
             name: "SourceCrawlerTests",
             dependencies: [
                 .target(name: "SourceCrawlerKit"),
                 .product(name: "SwiftSyntax", package: "swift-syntax"),
-                .product(name: "SwiftParser", package: "swift-syntax")
-                ]
-        )
+                .product(name: "SwiftParser", package: "swift-syntax"),
+            ]
+        ),
     ]
 )

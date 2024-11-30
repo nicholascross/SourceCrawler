@@ -11,7 +11,7 @@ class FunctionExtractionVisitor: SyntaxVisitor {
         return .visitChildren
     }
 
-    override func visitPost(_ node: ClassDeclSyntax) {
+    override func visitPost(_: ClassDeclSyntax) {
         typeContextStack.removeLast()
     }
 
@@ -20,7 +20,7 @@ class FunctionExtractionVisitor: SyntaxVisitor {
         return .visitChildren
     }
 
-    override func visitPost(_ node: StructDeclSyntax) {
+    override func visitPost(_: StructDeclSyntax) {
         typeContextStack.removeLast()
     }
 
@@ -29,7 +29,7 @@ class FunctionExtractionVisitor: SyntaxVisitor {
         return .visitChildren
     }
 
-    override func visitPost(_ node: EnumDeclSyntax) {
+    override func visitPost(_: EnumDeclSyntax) {
         typeContextStack.removeLast()
     }
 
@@ -55,4 +55,3 @@ class FunctionExtractionVisitor: SyntaxVisitor {
         return .skipChildren
     }
 }
-
